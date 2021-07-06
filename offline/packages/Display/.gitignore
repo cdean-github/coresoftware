@@ -1,0 +1,9 @@
+Display/build/
+Display/display/.deps/
+Display/display/Makefile
+Display/display/build/
+Display/display/display/
+Display/display/interface/
+Display/display/libtool
+Display/display/modules/
+Display/macro/G4Setup_sPHENIX.C
