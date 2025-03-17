@@ -127,7 +127,7 @@ class KFParticle_nTuple : public KFParticle_truthAndDetTools, public KFParticle_
   float m_calculated_intermediate_phi[max_intermediates] = {0};
   float m_calculated_intermediate_v[max_intermediates] = {0};
   float m_calculated_intermediate_chi2[max_intermediates] = {0};
-  float m_calculated_intermediate_ndof[max_intermediates] = {0};
+  int m_calculated_intermediate_ndof[max_intermediates] = {0};
   float m_calculated_intermediate_SV_chi2_per_ndof[max_intermediates] = {0};
   int m_calculated_intermediate_pdgID[max_intermediates] = {0};
   // float *m_calculated_intermediate_cov[max_intermediates];

@@ -29,6 +29,8 @@
 
 #include <KFParticle.h>
 
+#include <TF1.h>
+
 #include <limits>
 #include <string>   // for string
 #include <tuple>    // for tuple
@@ -81,12 +83,12 @@ class KFParticle_Tools : protected KFParticle_MVA
 
   float flightDistanceChi2(const KFParticle &particle, const KFParticle &vertex);
 
-  std::tuple<KFParticle, bool> buildMother(KFParticle vDaughters[], int daughterOrder[], bool isIntermediate, int intermediateNumber, int nTracks, bool constrainMass, float required_vertexID);
+  std::tuple<KFParticle, bool> buildMother(KFParticle vDaughters[], int daughterOrder[], bool isIntermediate, int intermediateNumber, int nTracks, bool constrainMass, float required_vertexID, PHCompositeNode* topNode);
 
   void constrainToVertex(KFParticle &particle, bool &goodCandidate, KFParticle &vertex);
 
   std::tuple<KFParticle, bool> getCombination(KFParticle vDaughters[], int daughterOrder[], KFParticle vertex,
-                                              bool constrain_to_vertex, bool isIntermediate, int intermediateNumber, int nTracks, bool constrainMass, float required_vertexID);
+                                              bool constrain_to_vertex, bool isIntermediate, int intermediateNumber, int nTracks, bool constrainMass, float required_vertexID, PHCompositeNode* topNode);
 
   std::vector<std::vector<int>> findUniqueDaughterCombinations(int start, int end);
 
@@ -108,6 +110,10 @@ class KFParticle_Tools : protected KFParticle_MVA
   void identify(const KFParticle &particle);
 
   float get_dEdx(PHCompositeNode *topNode, const KFParticle &daughter);
+
+  void init_dEdx_fits();
+
+  double get_dEdx_fitValue(float momentum, int PID);
 
   bool checkTrackAndVertexMatch(KFParticle vDaughters[], int nTracks, KFParticle vertex);
 
@@ -131,6 +137,17 @@ class KFParticle_Tools : protected KFParticle_MVA
   std::vector<float> m_intermediate_min_ipchi2;
   std::vector<float> m_intermediate_max_ipchi2;
   std::vector<float> m_intermediate_vertex_volume;
+
+  bool  m_use_PID{false};
+  
+  TF1 *f_pion_plus{nullptr};
+  TF1 *f_kaon_plus{nullptr};
+  TF1 *f_proton_plus{nullptr};
+  TF1 *f_pion_minus{nullptr};
+  TF1 *f_kaon_minus{nullptr};
+  TF1 *f_proton_minus{nullptr};
+
+  std::map<int, TF1*> pidMap;
 
   float m_min_mass {-1};
 

@@ -115,6 +115,11 @@ int KFParticle_sPHENIX::Init(PHCompositeNode *topNode)
     triggeranalyzer = new TriggerAnalyzer();
   }
 
+  if (m_use_PID)
+  {
+    init_dEdx_fits();
+  }
+
   return returnCode;
 }
 
