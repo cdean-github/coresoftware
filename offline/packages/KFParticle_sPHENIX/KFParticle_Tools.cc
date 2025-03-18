@@ -314,6 +314,35 @@ std::vector<KFParticle> KFParticle_Tools::makeAllDaughterParticles(PHCompositeNo
   return daughterParticles;
 }
 
+void KFParticle_Tools::getTracksFromBC(PHCompositeNode *topNode, const int &bunch_crossing, const std::string &vertexMapName, int &nTracks, int &nPVs)
+{
+  if (m_use_mbd_vertex) //If you're using the MBD vertex then there is no way to know which tracks are associated to it
+  {
+    return;
+  }
+
+  std::string vtxMN;
+  if (vertexMapName.empty())
+  {
+    vtxMN = m_vtx_map_node_name;
+  }
+  else
+  {
+    vtxMN = vertexMapName;
+  }
+
+  m_dst_vertexmap = findNode::getClass<SvtxVertexMap>(topNode, vtxMN);
+  for (SvtxVertexMap::ConstIter iter = m_dst_vertexmap->begin(); iter != m_dst_vertexmap->end(); ++iter)
+  {
+    m_dst_vertex = iter->second;
+    if ((int) m_dst_vertex->get_beam_crossing() == bunch_crossing)
+    {
+      nTracks += m_dst_vertex->size_tracks();
+      ++nPVs;
+    }
+  }
+}
+
 int KFParticle_Tools::getTracksFromVertex(PHCompositeNode *topNode, const KFParticle &vertex, const std::string &vertexMapName)
 {
   if (m_use_mbd_vertex) //If you're using the MBD vertex then there is no way to know which tracks are associated to it
@@ -331,14 +360,10 @@ int KFParticle_Tools::getTracksFromVertex(PHCompositeNode *topNode, const KFPart
     vtxMN = vertexMapName;
   }
 
-  SvtxVertex *associatedVertex = nullptr;
-  m_dst_vertexmap = findNode::getClass<SvtxVertexMap>(topNode, vtxMN);
-  auto globalvertexmap = findNode::getClass<GlobalVertexMap>(topNode, "GlobalVertexMap");
-  GlobalVertex *associatedgvertex = globalvertexmap->find(vertex.Id())->second;
-  auto svtxvtx_id = associatedgvertex->find_vtxids(GlobalVertex::SVTX)->second;
-  associatedVertex = m_dst_vertexmap->find(svtxvtx_id)->second;
+  m_dst_vertexmap = findNode::getClass<SvtxVertexMap>(topNode, vertexMapName);
+  SvtxVertex* associated_vertex = m_dst_vertexmap->get(vertex.Id());
 
-  return associatedVertex->size_tracks();
+  return associated_vertex->size_tracks();   
 }
 
 /*const*/ bool KFParticle_Tools::isGoodTrack(const KFParticle &particle, const std::vector<KFParticle> &primaryVertices)

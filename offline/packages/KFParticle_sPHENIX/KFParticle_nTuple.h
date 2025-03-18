@@ -32,8 +32,7 @@ class KFParticle_nTuple : public KFParticle_truthAndDetTools, public KFParticle_
                   KFParticle motherParticle,
                   const KFParticle &vertex,
                   std::vector<KFParticle> daughters,
-                  std::vector<KFParticle> intermediates,
-                  int nPVs, int multiplicity);
+                  std::vector<KFParticle> intermediates);
 
   float calc_secondary_vertex_mass_noPID(std::vector<KFParticle> kfp_daughters);
 
@@ -186,6 +185,7 @@ class KFParticle_nTuple : public KFParticle_truthAndDetTools, public KFParticle_
 
   int m_runNumber = -1;
   int m_evtNumber = -1;
+  int64_t m_bco = -1;
 
   bool m_trigger_info_available {false};
 };

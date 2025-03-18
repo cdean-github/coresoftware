@@ -206,7 +206,7 @@ int KFParticle_sPHENIX::process_event(PHCompositeNode *topNode)
 
       if (m_save_output)
       {
-        fillBranch(topNode, mother[i], vertex_kfparticle[i], daughters[i], intermediates[i], nPVs, multiplicity);
+        fillBranch(topNode, mother[i], vertex_kfparticle[i], daughters[i], intermediates[i]);
       }
       if (m_save_dst)
       {
