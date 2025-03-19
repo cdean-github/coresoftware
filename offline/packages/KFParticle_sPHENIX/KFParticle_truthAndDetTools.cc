@@ -571,22 +571,26 @@ void KFParticle_truthAndDetTools::initializeSubDetectorBranches(TTree *m_tree, c
     m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_staveID", &mvtx_staveID[daughter_id]);
     m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_chipID", &mvtx_chipID[daughter_id]);
     m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_nHits", &detector_nHits_MVTX[daughter_id]);
+    m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_nStates", &detector_nStates_MVTX[daughter_id]);
   }
   if (detectorName == "INTT")
   {
     m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_ladderZID", &intt_ladderZID[daughter_id]);
     m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_ladderPhiID", &intt_ladderPhiID[daughter_id]);
     m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_nHits", &detector_nHits_INTT[daughter_id]);
+    m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_nStates", &detector_nStates_INTT[daughter_id]);
   }
   if (detectorName == "TPC")
   {
     m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_sectorID", &tpc_sectorID[daughter_id]);
     m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_side", &tpc_side[daughter_id]);
     m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_nHits", &detector_nHits_TPC[daughter_id]);
+    m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_nStates", &detector_nStates_TPC[daughter_id]);
   }
   if (detectorName == "TPOT")
   {
     m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_nHits", &detector_nHits_TPOT[daughter_id]);
+    m_tree->Branch(TString(daughter_number) + "_" + TString(detectorName) + "_nStates", &detector_nStates_TPOT[daughter_id]);
   }
 }
 
@@ -714,7 +718,28 @@ void KFParticle_truthAndDetTools::fillDetectorBranch(PHCompositeNode *topNode,
   
       residual_x[daughter_id].push_back(global.x() - tstate->get_x());
       residual_y[daughter_id].push_back(global.y() - tstate->get_y());
-      residual_z[daughter_id].push_back(global.z() - tstate->get_z()); 
+      residual_z[daughter_id].push_back(global.z() - tstate->get_z());
+
+      uint8_t id = TrkrDefs::getTrkrId(stateckey);
+    
+      switch (id)
+      {
+        case TrkrDefs::mvtxId:
+          ++detector_nStates_MVTX[daughter_id];
+          break;
+        case TrkrDefs::inttId:
+          ++detector_nStates_INTT[daughter_id];
+          break;
+        case TrkrDefs::tpcId:
+          ++detector_nStates_TPC[daughter_id];
+          break;
+        case TrkrDefs::micromegasId:
+          ++detector_nStates_TPOT[daughter_id];
+          break;
+        default:
+         std::cout << "Cluster key doesnt match a tracking system, this shouldn't happen" << std::endl;
+         break; 
+      }
     }
   }
 }
@@ -811,6 +836,11 @@ void KFParticle_truthAndDetTools::clearVectors()
     intt_ladderPhiID[i].clear();
     tpc_sectorID[i].clear();
     tpc_side[i].clear();
+
+    detector_nStates_MVTX[i] = 0;
+    detector_nStates_INTT[i] = 0;
+    detector_nStates_TPC[i] = 0;
+    detector_nStates_TPOT[i] = 0;
 
     // PV vectors
     allPV_daughter_IP[i].clear();
