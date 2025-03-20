@@ -769,7 +769,7 @@ std::tuple<KFParticle, bool> KFParticle_Tools::buildMother(KFParticle vDaughters
       {
         float calculated_dEdx_value = get_dEdx(topNode, vDaughters[i]);
         double expected_dEdx_value = get_dEdx_fitValue((Int_t) vDaughters[i].GetQ() * vDaughters[i].GetP(), track_PDG_ID);
-        float dEdx_band_width = 0.1; //%
+        float dEdx_band_width = 0.2; //%
         bool accept_dEdx = isInRange((1-dEdx_band_width)*expected_dEdx_value, calculated_dEdx_value, (1+dEdx_band_width)*expected_dEdx_value);
         if(!accept_dEdx)
         {
